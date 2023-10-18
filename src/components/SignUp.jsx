@@ -1,13 +1,43 @@
+import { useContext } from "react";
+import { AuthContext } from "../provider/AuthProvider";
 
 const SignUp = () => {
+    const { createUser } = useContext(AuthContext);
 
     const handleSignUp = e => {
 
         e.preventDefault();
         const form = e.target;
-        const email =  form.email.value; 
-        const password =  form.password.value; 
-        console.log(email,password);
+        const email = form.email.value;
+        const password = form.password.value;
+        console.log(email, password);
+
+        createUser(email, password)
+            .then(result => {
+                console.log(result.user);
+                // new user has been created
+
+                const createdAt = result.user?.metadata?.creationTime;
+                const user = { email, createAt: createdAt }
+                fetch('http://localhost:5000/user', {
+                    method: 'POST',
+                    headers: {
+                        'content-type': 'application/json'
+                    },
+                    body: JSON.stringify(user)
+                })
+                    .then(res=>res.json())
+                    .then(data=>{
+                        // console.log(data);
+                        if(data.insertedId)
+                        {
+                            alert('user added to the mongodb database')
+                        }
+                    })
+            })
+            .catch(error => {
+                console.error(error);
+            })
 
     }
     return (
