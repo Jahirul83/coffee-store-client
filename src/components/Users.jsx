@@ -1,4 +1,5 @@
-import { useState } from "react";
+import axios from "axios";
+import { useEffect, useState } from "react";
 import { useLoaderData } from "react-router-dom";
 
 
@@ -6,9 +7,25 @@ const Users = () => {
     const loadedUsers = useLoaderData();
     const [users, setUsers] = useState(loadedUsers);
 
+
+    // useEffect(() => {
+    //     fetch('/')
+    //         .then(res => res.json())
+    //         .then(data => {
+    //             console.log(data);
+    //         })
+    // }, [])
+
+    // useEffect(() => {
+    //     axios.get('/')
+    //         .then(data => {
+    //             console.log(data.data);
+    //         })
+    // }, [])
+
     const handleDelete = id => {
         // make sure user is confirmed to delete
-        fetch(`https://coffee-store-server-50r8gve81-jahirul83.vercel.app/user/${id}`, {
+        fetch(`http://localhost:5000/user/${id}`, {
             method: "DELETE"
         })
             .then(res => res.json())
@@ -16,7 +33,7 @@ const Users = () => {
                 if (data.deletedCount > 0) {
                     console.log('deleted successfully');
                     // remove the user from ui
-                    const remaining = users.filter(user => user._id!== id);
+                    const remaining = users.filter(user => user._id !== id);
                     setUsers(remaining)
 
                 }
