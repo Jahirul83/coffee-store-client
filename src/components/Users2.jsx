@@ -1,25 +1,26 @@
-import axios from "axios";
+import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { useLoaderData } from "react-router-dom";
 
 
-const Users = () => {
-    const loadedUsers = useLoaderData();
-    const [users, setUsers] = useState(loadedUsers);
+const Users2 = () => {
 
+
+    const { isPending,isError,error, data: users } = useQuery({
+        queryKey: ['users'],
+        queryFn: async () => {
+            const res = await fetch('http://localhost:5000/user');
+            return res.json();
+
+        }
+    })
+
+    // const [users, setUsers] = useState([]);
 
     // useEffect(() => {
-    //     fetch('/')
-    //         .then(res => res.json())
-    //         .then(data => {
-    //             console.log(data);
-    //         })
-    // }, [])
-
-    // useEffect(() => {
-    //     axios.get('/')
-    //         .then(data => {
-    //             console.log(data.data);
+    //     fetch('http://localhost:5000/user')
+    //         .then(res=> res.json())
+    //         .then(data=>{
+    //             setUsers(data)
     //         })
     // }, [])
 
@@ -40,9 +41,17 @@ const Users = () => {
                 // console.log(data);
             })
     }
+
+
+    if (isPending) {
+        return <span className="loading loading-spinner loading-lg"></span>;
+    }
+    if(isError){
+        return <p>{error.message}</p>
+    }
     return (
         <div>
-            <h1>users:{loadedUsers.length}</h1>
+            {/* <h1>users:{loadedUsers.length}</h1> */}
             <div className="overflow-x-auto">
                 <table className="table">
                     {/* head */}
@@ -58,7 +67,7 @@ const Users = () => {
                     <tbody>
                         {/* row 1 */}
                         {
-                            users.map(user => <tr key={user._id}>
+                            users?.map(user => <tr key={user._id}>
                                 <th>1</th>
                                 <td>{user.email}</td>
                                 <td>{user.createAt}</td>
@@ -76,4 +85,4 @@ const Users = () => {
     );
 };
 
-export default Users;
+export default Users2;
